@@ -6,10 +6,10 @@ using minimal_api.Infraestructure.Db;
 using minimal_api.Infraestructure.Services;
 using System.Reflection;
 
-namespace Test.Domain.Servicos
+namespace Test.Infrastructure.Servicos
 {
     [TestClass]
-    public class VeiculoServicosTest
+    public class AdministradorServicosTest
     {
         private DbContexto CriarContextoDeTeste()
         {
@@ -30,49 +30,48 @@ namespace Test.Domain.Servicos
 
             var context = new DbContexto(options);
 
-            context.Database.ExecuteSqlRaw("TRUNCATE TABLE Veiculos");
+            context.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
 
             return context;
         }
 
-        private static Veiculo Veiculo()
-           => new Veiculo
+        private static Administrador Administrador()
+           => new Administrador
            {
-               Id = 1,
-               Marca = "toyota",
-               Ano = 2024,
-               Nome = "etios"
+               Email = "teste@teste.com",
+               Senha = "teste",
+               Perfil = EPerfil.adm,
            };
 
-        private void ArrangeTest(out Veiculo veiculo, out VeiculoServicos veiculoServicos)
+        private void ArrangeTest(out Administrador adm, out AdministradorServico administradorServico)
         {
             var context = CriarContextoDeTeste();
-            veiculo = Veiculo();
-            veiculoServicos = new VeiculoServicos(context);
+            adm = Administrador();
+            administradorServico = new AdministradorServico(context);
         }
 
         [TestMethod]
         public void TestandoSalvarAdministrador()
         {
             // Arrange
-            ArrangeTest(out Veiculo veiculo, out VeiculoServicos veiculoServicos);
+            ArrangeTest(out Administrador adm, out AdministradorServico administradorServico);
 
             // Act
-            veiculoServicos.Incluir(veiculo);
+            administradorServico.Incluir(adm);
 
             // Assert
-            Assert.AreEqual(1, veiculoServicos.Todos(1).Count());
+            Assert.AreEqual(1, administradorServico.Todos(1).Count());
         }
 
         [TestMethod]
         public void TestandoBuscaPorId()
         {
             // Arrange
-            ArrangeTest(out Veiculo veiculo, out VeiculoServicos veiculoServicos);
+            ArrangeTest(out Administrador adm, out AdministradorServico administradorServico);
 
             // Act
-            veiculoServicos.Incluir(veiculo);
-            var admDoBanco = veiculoServicos.BuscaPorId(veiculo.Id);
+            administradorServico.Incluir(adm);
+            var admDoBanco = administradorServico.BuscaPorId(adm.Id);
 
             // Assert
             Assert.AreEqual(1, admDoBanco?.Id);
